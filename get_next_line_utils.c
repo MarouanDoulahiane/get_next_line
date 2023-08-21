@@ -1,5 +1,27 @@
 #include "get_next_line.h"
 
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strnew(size_t size)
+{
+	size_t	i;
+	char	*result;
+
+	if (!(result = malloc(size + 1)))
+		return (NULL);
+	i = 0;
+	while (i <= size)
+		result[i++] = '\0';
+	return (result);
+}
 
 char	*ft_strchr(const char *s, int c)
 {

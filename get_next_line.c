@@ -5,13 +5,13 @@ char    *get_next_line(int fd)
   static char   *remainder = NULL;
   char          buffer[BUFFER_SIZE + 1];
   int           bytes_read = 0;
-  char          *newline = NULL:
+  char          *newline = NULL;
   char          *line = NULL;
 
   if (fd < 0 || BUFFER_SIZE <= 0)
     return NULL;
 
-  while ((newline = ft_strchr(remainder, '\n')) == NULL && (byter_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+  while ((newline = ft_strchr(remainder, '\n')) == NULL && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
   {
     buffer[bytes_read] = '\0';
     remainder = ft_strjoin(remainder, buffer);
@@ -32,5 +32,5 @@ char    *get_next_line(int fd)
     remainder = NULL;
   }
 
-  return (NULL);
+  return line;
 }
