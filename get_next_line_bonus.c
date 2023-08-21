@@ -2,7 +2,7 @@
 
 char    *get_next_line(int fd)
 {
-  static char   *remainder[1024] = {NULL};
+  static char   *remainder[8192] = {NULL};
   char          buffer[BUFFER_SIZE + 1];
   int           bytes_read = 0;
   char          *newline = NULL;
