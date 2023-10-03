@@ -30,7 +30,7 @@ char    *get_next_line(int fd)
     ft_strncpy(line, remainder, newline - remainder);
     remainder = ft_strdup(newline + 1);
   }
-  else if (!bytes_read && remainder)
+  else if (remainder)
   {
     line = ft_strdup(remainder);
     remainder = NULL;

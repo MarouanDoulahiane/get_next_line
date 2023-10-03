@@ -29,7 +29,7 @@ char    *get_next_line(int fd)
     ft_strncpy(line, remainder[fd], newline - remainder[fd]);
     remainder[fd] = ft_strdup(newline + 1);
 }
-  else if (!bytes_read && remainder[fd])
+  else if (remainder[fd])
   {
     line = ft_strdup(remainder[fd]);
     remainder[fd] = NULL;
