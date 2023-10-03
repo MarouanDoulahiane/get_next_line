@@ -5,6 +5,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+#define BUFFER_SIZE 42
+
 size_t	ft_strlen(const char *s);
 char	*ft_strnew(size_t size);
 char	*ft_strchr(const char *s, int c);

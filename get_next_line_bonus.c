@@ -3,7 +3,7 @@
 char    *get_next_line(int fd)
 {
   static char   *remainder[8192] = {NULL};
-  char          buffer[BUFFER_SIZE + 1];
+  char          *buffer = (char*)malloc(sizeof(char) * BUFFER_SIZE);
   int           bytes_read = 0;
   char          *newline = NULL;
   char          *line = NULL;
@@ -19,6 +19,8 @@ char    *get_next_line(int fd)
 		else
 		  remainder[fd] = ft_strjoin(remainder[fd], buffer);
   }
+
+  free(buffer);
 
   if (newline)
 {

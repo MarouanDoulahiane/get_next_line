@@ -3,7 +3,7 @@
 char    *get_next_line(int fd)
 {
   static char   *remainder = NULL;
-  char          buffer[BUFFER_SIZE + 1];
+  char          *buffer = (char*)malloc(sizeof(char) * BUFFER_SIZE);
   int           bytes_read = 0;
   char          *newline = NULL;
   char          *line = NULL;
@@ -19,6 +19,9 @@ char    *get_next_line(int fd)
     else
       remainder = ft_strjoin(remainder, buffer);
   }
+  
+  free(buffer);
+
 
   if (newline)
   {
@@ -32,6 +35,7 @@ char    *get_next_line(int fd)
     line = ft_strdup(remainder);
     remainder = NULL;
   }
+
 
   return line;
 }
