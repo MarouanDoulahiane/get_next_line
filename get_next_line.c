@@ -1,41 +1,108 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mdoulahi <mdoulahi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/31 02:14:56 by mdoulahi          #+#    #+#             */
+/*   Updated: 2023/11/04 20:43:24 by mdoulahi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
+#include <stdio.h>
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 1
+#endif
 
-char    *get_next_line(int fd)
+typedef struct data
 {
-  static char   *remainder = NULL;
-  char          *buffer = (char*)malloc(sizeof(char) * BUFFER_SIZE);
-  int           bytes_read = 0;
-  char          *newline = NULL;
-  char          *line = NULL;
+	char	*remainder;
+	char	buffer[BUFFER_SIZE + 1];
+	char	*newline;
+	char	*line;
+	int		bytes_read;
+}	t_data;
 
-  if (fd < 0 || BUFFER_SIZE <= 0)
-    return NULL;
-
-  while ((remainder == NULL || (newline = ft_strchr(remainder, '\n')) == NULL) && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
-  {
-    buffer[bytes_read] = '\0';
-    if (remainder == NULL)
-      remainder = ft_strdup(buffer);
-    else
-      remainder = ft_strjoin(remainder, buffer);
-  }
-  
-  free(buffer);
-
-
-  if (newline)
-  {
-    *newline = '\0';
-    line = ft_strnew(newline - remainder);
-    ft_strncpy(line, remainder, newline - remainder);
-    remainder = ft_strdup(newline + 1);
-  }
-  else if (remainder)
-  {
-    line = ft_strdup(remainder);
-    remainder = NULL;
-  }
-
-
-  return line;
+int	helper(t_data *data)
+{
+	if (!data->remainder)
+		return (1);
+	data->newline = ft_strchr(data->remainder, '\n');
+	if (data->newline)
+	{
+		data->line = malloc(data->newline - data->remainder + 1 + 1);
+		if (!data->line)
+			return (1);
+		data->line[data->newline - data->remainder] = '\0';
+		ft_strncpy(data->line, data->remainder, 
+			data->newline - data->remainder + 1);
+		data->remainder = ft_strdup(data->newline + 1, data->remainder);
+		if (!data->remainder)
+			return (1);
+		return (0);
+	}
+	else if (!data->bytes_read && !data->remainder[0])
+		return (2);
+	else if (!data->bytes_read)
+	{
+		data->line = ft_strdup(data->remainder, data->remainder);
+		data->remainder = NULL;
+		return (0);
+	}
+	return (255);
 }
+
+char	*return_line(t_data *data, int fd)
+{
+	int	choice;
+
+	data->bytes_read = read(fd, data->buffer, BUFFER_SIZE);
+	while (data->bytes_read >= 0)
+	{
+		data->buffer[data->bytes_read] = 0;
+		data->remainder = ft_strjoin(data->remainder, data->buffer);
+		choice = helper(data);
+		if (choice == 0)
+			return (data->line);
+		if (choice == 1)
+			return (NULL);
+		else if (choice == 2)
+			break ;
+		data->bytes_read = read(fd, data->buffer, BUFFER_SIZE);
+	}
+	free(data->remainder);
+	data->remainder = NULL;
+	return (NULL);
+}
+
+char	*get_next_line(int fd)
+{
+	static t_data	data;
+
+	if (!BUFFER_SIZE || fd == -1)
+		return (NULL);
+	if (!data.remainder)
+		data.remainder = ft_strdup("", NULL);
+	return (return_line(&data, fd));
+}
+// #include <fcntl.h>
+// #include <stdio.h>
+
+// void f(){
+// 	system("leaks a.out");
+// }
+
+// int main (){
+// 	int fd = open("get_next_line.c", O_RDONLY);
+
+// 	atexit(f);
+// 	char *line = get_next_line(fd);
+// 	while (line)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 		line = get_next_line(fd);
+// 	}
+// }
